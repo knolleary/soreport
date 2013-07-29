@@ -7,6 +7,7 @@ http://kahiti.knolleary.net/soreport/sample
 
 It *could* be used for other sites in the Stack Exchange network, but is currently hardcoded to Stack Overflow.
 
+Subscribe your Little Printer to the publication on the [BERG Cloud Remote](http://remote.bergcloud.com/publications/181)
 
 
 ### Settings
