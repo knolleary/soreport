@@ -1,0 +1,318 @@
+<html>
+<head>
+<script src="http://kahiti.knolleary.net/soreport/static/d3.min.js"></script>
+<style>
+body {
+   padding:5px 0 0 0;
+   margin:0;
+   font-family:'Quicksand';
+}
+
+#header {
+   text-align: center;
+}
+#footer {
+   text-align: center;
+   margin-bottom: 10px;
+}
+#page {
+   width: 384px;
+   max-height: 800px;
+   overflow: hidden;
+}
+
+.user {
+  margin-bottom: 5px;
+}
+.user-icon {
+  vertical-align: top;
+  width: 80px;
+  height: 80px;
+  display: inline-block;
+  overflow: hidden;
+  border-radius: 10px;
+}
+.user-info {
+}
+.user-name {
+  font-size: 22px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.user-meta {
+  font-size: 18px;
+  text-align: center;
+}
+  
+.rep-change {
+  text-align: center;
+  vertical-align: top;
+  font-weight: bold;
+  width: 55px;
+  height: 20px;
+  line-height: 20px;
+  color: #fff;
+  background: #000;
+  font-size: 18px;
+  display: inline-block;
+  font-family:'Courier New';
+}
+.rep-details {
+  display: inline-block;
+  width: 315px;
+}
+.rep-icons {
+  text-align: right;
+}
+
+.rep-item {
+  border-top: 1px solid black;
+  padding-bottom: 5px ;
+}
+.rep-item-last {
+  border-bottom: 1px solid black;
+}
+.rep-title {
+  margin-left: 5px;
+  font-size: 16px;
+}
+.rep-icon {
+  vertical-align: middle;
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border-radius: 3px;
+  background: url(http://kahiti.knolleary.net/soreport/static/icon-default.png) no-repeat;
+}
+.rep-icon-up_votes {
+  background: url(http://kahiti.knolleary.net/soreport/static/icon-upvote.png) no-repeat;
+}
+.rep-icon-accepts {
+  background: url(http://kahiti.knolleary.net/soreport/static/icon-accepted.png) no-repeat;
+}
+.rep-icon-down_votes {
+  background: url(http://kahiti.knolleary.net/soreport/static/icon-downvote.png) no-repeat;
+}
+.rep-icon-suggested_edits {
+  background: url(http://kahiti.knolleary.net/soreport/static/icon-edit.png) no-repeat;
+}
+
+ul.notifications {
+  padding:10px 10px 10px 40px;
+  margin:0;
+}
+ul.notifications li {
+  padding:0;
+  margin:0 0 10px 0;
+  list-style-type: none;
+  font-size: 16px;
+}
+.notification-icon {
+  vertical-align: top;
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  border-radius: 3px;
+  margin-left: -30px;
+  background: url(http://kahiti.knolleary.net/soreport/static/icon-default.png) no-repeat;
+}
+.notification-icon-badge_earned {
+   background: url(http://kahiti.knolleary.net/soreport/static/icon-badge.png) no-repeat;
+}
+.notification-icon-new_privilege {
+  background: url(http://kahiti.knolleary.net/soreport/static/icon-accepted.png) no-repeat;
+}
+
+#repgraph {
+  width: 382px;
+  height: 75px;
+  margin: auto;
+}
+
+hr {
+  border: 2px solid black;
+}
+hr.thin {
+  border: 1px solid black;
+}
+hr.narrow {
+  border: 1px solid black;
+  width: 30%;
+  margin: auto;
+}
+.sectionlabel {
+  font-size: 16px;
+  text-align: center;
+  font-weight: bold;
+}
+.axis text {
+  font-size: 11px;
+}
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.bar {
+  fill: black;
+}
+
+.more {
+  margin-right: 20px;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: right;
+}
+
+</style>
+</head>
+<body>
+<div id="page">
+<hr>
+<hr class="thin">
+<div class="sectionlabel">&bull; Stack Exchange activity for &bull;</div> 
+<div class="user">
+  <div class="user-info">
+    <div class="user-name">{{ display_name }}</div>
+    <div class="user-meta">
+       <span class="user-rep">{{ reputation }}</span> &bull;
+       <span class="user-badges">{{ badge_counts.bronze }}/{{ badge_counts.silver }}/{{ badge_counts.gold }}<img style="position:relative;top:3px; left:-2px;" src="http://kahiti.knolleary.net/soreport/static/badge-b.png"/></span>
+    </div>
+    <div class="user-meta">
+    
+    </div>
+  </div>
+</div>
+<hr class="thin">
+<div class="sectionlabel">&bull; two weeks activity &bull;</div> 
+<div id="repgraph"></div>
+
+{% if history or notifications %}
+  <hr class="thin">
+  <div class="sectionlabel" style="margin: 10px 0;">&bull; 24hrs activity &bull;</div> 
+{% endif %}
+
+{% if history %}
+  {% for item in history %}
+  <div class="rep-item{% if forloop.last %} rep-item-last{% endif %}">
+    <div class="rep-change">{% if item.rep < 0 %}-{% else %}{% if item.rep > 0 %}+{% endif %}{% endif %}{{ item.rep }}</div>
+    <div class="rep-details">
+      <div class="rep-title">{% if item.post_type == "answer" %}A{% else %}Q{% endif %}: {{ item.title }}</div>
+      <div class="rep-icons">
+        {% for i in item.items %}
+            {% for rc in i.c %}
+              <span class="rep-icon rep-icon-{{ i.label }}"></span>
+            {% endfor %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+{% endif %}
+
+
+{% if notifications %}
+  <ul class="notifications">
+  {% for item in notifications %}
+    <li><span class="notification-icon notification-icon-{{ item.type }}"></span> {{ item.body|safe }}</li>
+  {% endfor %}
+  </ul>
+{% endif %}
+{% if more and more > 0 %}
+  <div class="more">+ {{ more }} more item{{ more|pluralize }}</div>
+{% endif %}
+
+{% if repevents %}
+<script>
+  var data = [
+    {% for item in repevents %}
+    { date: {{ item.date }}, rep:{{ item.rep }} }{% if forloop.revcounter0 > 0 %},{% endif %}
+    {% endfor %}
+  ];
+  
+  var margin = {top: 10, right: 25, bottom: 20, left: 10},
+    width = 382 - margin.left - margin.right,
+    height = 75 - margin.top - margin.bottom;
+    
+  var svg = d3.select("#repgraph").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+  
+  var x = d3.scale.ordinal()
+    .rangeRoundBands([0, width], 0.1);
+  
+  
+  var y = d3.scale.linear()
+      .range([height, 0]);
+  
+  var xAxis = d3.svg.axis()
+      .scale(x)
+      .orient("bottom")
+      .tickSize(2)
+      .tickFormat(function(d) { return "SMTWTFS"[(new Date(d*1000)).getDay()]});
+  
+  var yAxis = d3.svg.axis()
+      .scale(y)
+      .orient("left");
+
+  x.domain(data.map(function(d) { return d.date; }));
+  var maxY = Math.floor((d3.max(data, function(d) { return d.rep; })+5)/10)*10;
+  y.domain([0, maxY]);
+  
+  svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis);
+
+
+  svg.selectAll(".bar")
+      .data(data)
+    .enter().append("rect")
+      .attr("class", "bar")
+      .attr("x", function(d) { return Math.floor(x(d.date)); })
+      .attr("width", Math.floor(x.rangeBand()))
+      .attr("y", function(d) { return Math.floor(y(d.rep)); })
+      .attr("height", function(d) { return height-Math.floor(y(d.rep)); });
+
+  var midY = Math.floor((maxY+5)/10)*5;
+  if (midY == 0) {
+    midY = 5;
+  }
+  var grid = svg.append("g")
+    .attr("transform","translate(0,"+Math.floor(y(midY))+")");
+  grid.append("path")
+    .attr("d", "M 0 0 H "+width)
+    .attr("stroke-dasharray","2,15")
+    .attr("stroke","#000");
+  grid.append("text")
+    .attr("text-anchor","start")
+    .attr("x",width+2)
+    .attr("font-size","11px")
+    .attr("y",5)
+    .text(midY)
+
+  var grid2 = svg.append("g")
+    .attr("transform","translate(0,"+Math.floor(y(maxY))+")");
+  grid2.append("path")
+    .attr("d", "M 0 0 H "+width)
+    .attr("stroke","#000")
+    .attr("stroke-dasharray","2,15");
+  grid2.append("text")
+    .attr("text-anchor","start")
+    .attr("x",width+2)
+    .attr("font-size","12px")
+    .attr("y",5)
+    .text(maxY)
+      
+</script>
+{% endif %}
+<hr class="thin">
+<hr>
+</div>
+</body>
+</html>

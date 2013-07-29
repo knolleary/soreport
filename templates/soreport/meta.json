@@ -1,0 +1,9 @@
+{
+    "owner_email": "nick.oleary@gmail.com",
+    "publication_api_version": "1.0",
+    "name": "Stack Overflow Daily Report",
+    "description": "A daily report of your Stack Overflow activity.",
+    "delivered_on": "every day",
+    "send_delivery_count": "false",
+    "external_configuration": "true"
+}
